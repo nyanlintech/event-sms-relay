@@ -1,0 +1,26 @@
+{
+  "processGuests": {
+    "httpMethod": "POST",
+    "path": "/process",
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": "{\"test\": true}"
+  },
+  
+  "getGuests": {
+    "httpMethod": "GET", 
+    "path": "/guests",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  },
+  
+  "getGuestsSummary": {
+    "httpMethod": "GET",
+    "path": "/guests/summary", 
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

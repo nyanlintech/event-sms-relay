@@ -1,0 +1,25 @@
+version = 0.1
+[default]
+[default.global]
+[default.global.parameters]
+stack_name = "event-sms-relay"
+s3_bucket = ""  # SAM will create a bucket automatically
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+region = "us-west-2"  # Change to your preferred region
+
+[default.build]
+[default.build.parameters]
+cached = true
+parallel = true
+
+[default.deploy]
+[default.deploy.parameters]
+capabilities = "CAPABILITY_IAM"
+confirm_changeset = true
+fail_on_empty_changeset = false
+stack_name = "event-sms-relay"
+s3_bucket = ""  # SAM will create a bucket automatically
+region = "us-west-2"  # Change to your preferred region
+disable_rollback = false
+parameter_overrides = "ParameterKey=Environment,ParameterValue=prod"
