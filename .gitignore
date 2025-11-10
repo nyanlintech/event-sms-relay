@@ -1,4 +1,51 @@
+# Sensitive data - never commit
 *.csv
-.sms-config.json
-node_modules
+assets/
 .env
+.env.local
+.env.*.local
+
+# JSON files (but allow config files)
+*.json
+!package.json
+!package-lock.json
+!jest.config.js
+!tsconfig.json
+!parameters.json.example
+
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+yarn-error.log
+
+# AWS SAM build artifacts
+.aws-sam/
+samconfig.toml
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.sublime-*
+*.swp
+*.swo
+*~
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+
+# Git
+.git/
+refs/original/

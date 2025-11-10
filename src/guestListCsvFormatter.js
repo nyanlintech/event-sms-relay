@@ -2,7 +2,17 @@ const fs = require("fs").promises;
 const path = require("path");
 const Papa = require("papaparse");
 
-const handler = async () => {
+/* 
+
+Local script that converts a CSV guest list into a formatted CSV for RSVP tracking 
+
+For parties with multiple members, if only one member has a phone number, consolidate the party into a single entry with combined names
+
+TODO: Implement a UI for easier usage?
+
+*/
+
+const guestListCsvFormatter = async () => {
   try {
     // Read the CSV file
     const csvFilePath = path.join(__dirname, "guest-list-all.csv");
@@ -84,4 +94,4 @@ const handler = async () => {
   }
 };
 
-handler();
+module.exports = { guestListCsvFormatter };

@@ -1,30 +1,25 @@
 {
-  "name": "event-sms-relay",
-  "version": "1.0.0",
+  "name": "event-sms-relay-lambda",
+  "version": "1.0.0", 
   "description": "SMS Group Messaging System - Lambda function for processing guest data and sending group SMS notifications",
-  "main": "src/handler.js",
+  "main": "handler.js",
   "scripts": {
     "build": "sam build",
     "deploy": "sam deploy --guided",
     "deploy:dev": "sam deploy --parameter-overrides Environment=dev",
     "deploy:staging": "sam deploy --parameter-overrides Environment=staging", 
     "deploy:prod": "sam deploy --parameter-overrides Environment=prod",
-    "local": "sam local start-api",
-    "test": "sam local invoke EventSmsRelayFunction -e tests/test-events.json",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
     "logs": "sam logs -n EventSmsRelayFunction --stack-name event-sms-relay-dev --tail",
-    "clean": "rm -rf .aws-sam",
-    "lint": "eslint src/**/*.js",
-    "test:local": "cd tests && node test-local.sh"
+    "clean": "rm -rf .aws-sam"
   },
   "dependencies": {
-    "@aws-sdk/client-ssm": "^3.901.0",
     "aws-sdk": "^2.1691.0",
-    "googleapis": "^161.0.0",
+    "googleapis": "^144.0.0",
     "papaparse": "^5.5.3",
     "twilio": "^5.10.2"
-  },
-  "devDependencies": {
-    "eslint": "^9.37.0"
   },
   "engines": {
     "node": ">=20.0.0"

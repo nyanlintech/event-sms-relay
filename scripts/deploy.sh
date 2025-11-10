@@ -67,8 +67,6 @@ if [ ! -z "$API_URL" ]; then
     echo ""
     echo "📋 Available endpoints:"
     echo "  POST $API_URL/process        - Process guest data"
-    echo "  GET  $API_URL/guests         - Get all guests"
-    echo "  GET  $API_URL/guests/summary - Get guest summary"
 else
     echo "ℹ️  To get your API Gateway URL, run:"
     echo "   aws cloudformation describe-stacks --stack-name event-sms-relay --query 'Stacks[0].Outputs'"

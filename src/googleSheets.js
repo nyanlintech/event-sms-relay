@@ -1,19 +1,15 @@
 const { google } = require("googleapis");
 const { getGSheetCredentials } = require("./getCredentials");
+const { log } = require("./utils");
 
-const sheetName = "rsvped-guests-formatted"; // #todo: make dynamic
+const sheetName = "rsvped-guests-formatted"; // #TODO: make this dynamic or get from env
 const range = "A1:Z150";
 
-// Initialize Google Sheets authentication and get sheets API
 const initializeSheets = async () => {
   try {
-    const credentials = await getGSheetCredentials();
-    const { gClientEmail, gPrivateKey, gSpreadSheetId } = credentials || {};
+    const { gClientEmail, gPrivateKey, gSpreadSheetId } = await getGSheetCredentials();
 
-    // Add validation
-    if (!gClientEmail || !gPrivateKey || !gSpreadSheetId) {
-      throw new Error("Missing required Google Sheets credentials");
-    }
+    if (!gClientEmail || !gPrivateKey || !gSpreadSheetId) throw new Error("Missing required Google Sheets credentials");
 
     const auth = new google.auth.JWT({
       email: gClientEmail,
@@ -30,11 +26,9 @@ const initializeSheets = async () => {
   }
 };
 
-// Get all guest data from Google Sheets
 const getGuestData = async () => {
   try {
     const { sheets, spreadsheetId } = await initializeSheets();
-
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId,
       range: `${sheetName}!${range}`,
@@ -42,11 +36,8 @@ const getGuestData = async () => {
 
     const rows = response?.data?.values || [];
 
-    if (!rows || rows.length === 0) {
-      throw new Error("No data found in spreadsheet");
-    }
+    if (!rows?.length) throw new Error("No data found in spreadsheet");
 
-    // Convert to object
     const headers = rows[0];
     const data = rows.slice(1).map((row) => {
       const guest = {};
@@ -56,7 +47,6 @@ const getGuestData = async () => {
       return guest;
     });
 
-    // Return all data (filtering will be done in getTargetNumbers)
     return data.filter(Boolean);
   } catch (error) {
     console.error("Error reading from Google Sheets:", error);
@@ -64,21 +54,17 @@ const getGuestData = async () => {
   }
 };
 
-// Update SMS preference for a specific phone number
 const updateSmsPreference = async (phoneNumber, shouldReceiveSms) => {
   try {
     const { sheets, spreadsheetId } = await initializeSheets();
-
-    // First, get the current data to find the row
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId,
       range: `${sheetName}!${range}`,
     });
 
     const rows = response?.data?.values || [];
-    if (!rows || rows.length === 0) {
-      throw new Error("No data found in spreadsheet");
-    }
+
+    if (!rows?.length) throw new Error("No data found in spreadsheet");
 
     const headers = rows[0];
     const phoneColIndex = headers.findIndex((h) => h && h.toLowerCase().includes("phone"));
@@ -96,8 +82,8 @@ const updateSmsPreference = async (phoneNumber, shouldReceiveSms) => {
       return false;
     }
 
-    // Find the row with matching phone number
     let targetRowIndex = -1;
+
     for (let i = 1; i < rows.length; i++) {
       if (rows[i][phoneColIndex] === phoneNumber) {
         targetRowIndex = i;
@@ -110,23 +96,23 @@ const updateSmsPreference = async (phoneNumber, shouldReceiveSms) => {
       return false;
     }
 
-    // Update the specific cell
     const cellRange = `${sheetName}!${String.fromCharCode(65 + smsColIndex)}${targetRowIndex + 1}`;
     const cellValue = shouldReceiveSms ? "TRUE" : "FALSE";
 
-    console.log(`Updating cell ${cellRange} with value: "${cellValue}"`);
+    log(`Updating cell ${cellRange} with value: "${cellValue}"`);
 
     const updateResult = await sheets.spreadsheets.values.update({
       spreadsheetId,
       range: cellRange,
-      valueInputOption: "USER_ENTERED", // Changed from RAW to USER_ENTERED
+      valueInputOption: "USER_ENTERED",
       resource: {
         values: [[cellValue]],
       },
     });
 
-    console.log(`Update result:`, updateResult.data);
-    console.log(`Updated SMS preference for ${phoneNumber} to ${shouldReceiveSms} (cell value: ${cellValue})`);
+    log(`Update result:`, updateResult.data);
+    log(`Updated SMS preference for ${phoneNumber} to ${shouldReceiveSms} (cell value: ${cellValue})`);
+
     return true;
   } catch (error) {
     console.error("Error updating SMS preference:", error);
@@ -134,66 +120,7 @@ const updateSmsPreference = async (phoneNumber, shouldReceiveSms) => {
   }
 };
 
-// Update RSVP status for a specific phone number
-const updateRsvpStatus = async (phoneNumber, rsvpStatus) => {
-  try {
-    const { sheets, spreadsheetId } = await initializeSheets();
-
-    // First, get the current data to find the row
-    const response = await sheets.spreadsheets.values.get({
-      spreadsheetId,
-      range: `${sheetName}!${range}`,
-    });
-
-    const rows = response?.data?.values || [];
-    if (!rows || rows.length === 0) {
-      throw new Error("No data found in spreadsheet");
-    }
-
-    const headers = rows[0];
-    const phoneColIndex = headers.findIndex((h) => h && h.toLowerCase().includes("phone"));
-    const rsvpColIndex = headers.findIndex((h) => h && h.toLowerCase().includes("rsvp"));
-
-    if (phoneColIndex === -1 || rsvpColIndex === -1) {
-      console.error("Required columns not found");
-      return false;
-    }
-
-    // Find the row with matching phone number
-    let targetRowIndex = -1;
-    for (let i = 1; i < rows.length; i++) {
-      if (rows[i][phoneColIndex] === phoneNumber) {
-        targetRowIndex = i;
-        break;
-      }
-    }
-
-    if (targetRowIndex === -1) {
-      console.error(`Phone number ${phoneNumber} not found in sheet`);
-      return false;
-    }
-
-    // Update the specific cell
-    const cellRange = `${sheetName}!${String.fromCharCode(65 + rsvpColIndex)}${targetRowIndex + 1}`;
-    await sheets.spreadsheets.values.update({
-      spreadsheetId,
-      range: cellRange,
-      valueInputOption: "RAW",
-      resource: {
-        values: [[rsvpStatus]],
-      },
-    });
-
-    console.log(`Updated RSVP for ${phoneNumber} to ${rsvpStatus}`);
-    return true;
-  } catch (error) {
-    console.error("Error updating RSVP status:", error);
-    return false;
-  }
-};
-
 module.exports = {
   getGuestData,
   updateSmsPreference,
-  updateRsvpStatus,
 };

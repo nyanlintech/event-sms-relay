@@ -1,0 +1,13 @@
+{
+  "GoogleProjectId": "your-google-cloud-project-id",
+  "GooglePrivateKeyId": "your-private-key-id-from-service-account-json",
+  "GooglePrivateKey": "-----BEGIN PRIVATE KEY-----\\nYOUR_FULL_PRIVATE_KEY_HERE_ESCAPE_NEWLINES_AS_DOUBLE_BACKSLASH_N\\n-----END PRIVATE KEY-----\\n",
+  "GoogleClientEmail": "your-service-account@your-project.iam.gserviceaccount.com",
+  "GoogleClientId": "123456789012345678901",
+  "TwilioAccountSid": "ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  "TwilioAuthToken": "your-twilio-auth-token-32-characters",
+  "TwilioPhoneNumber": "+12345678900",
+  "GoogleSheetId": "your-google-sheet-id-from-url",
+  "GoogleSheetName": "Sheet1",
+  "AdminPhoneNumbers": "+1234567890,+1987654321"
+}
