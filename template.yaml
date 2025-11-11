@@ -35,18 +35,6 @@ Resources:
             RestApiId: !Ref EventSmsRelayApi
             Path: /process
             Method: post
-        GetGuestsSummary:
-          Type: Api
-          Properties:
-            RestApiId: !Ref EventSmsRelayApi
-            Path: /guests/summary
-            Method: get
-        GetGuests:
-          Type: Api
-          Properties:
-            RestApiId: !Ref EventSmsRelayApi
-            Path: /guests
-            Method: get
   EventSmsRelayApi:
     Type: AWS::Serverless::Api
     Properties:
